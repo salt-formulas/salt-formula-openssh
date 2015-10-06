@@ -1,0 +1,7 @@
+applications:
+- openssh
+parameters:
+  openssh:
+    server:
+      enabled: true
+      password_auth: false

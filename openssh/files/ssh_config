@@ -1,0 +1,14 @@
+{%- from "openssh/map.jinja" import client with context %}
+{%- from "linux/map.jinja" import network with context %}
+
+Host *
+
+    SendEnv LANG LC_*
+    HashKnownHosts yes
+    GSSAPIAuthentication {% if client.gssapi_authentication %}yes{% else %}no{% endif %}
+    GSSAPIDelegateCredentials no
+    ForwardAgent {% if client.forward_agent %}yes{% else %}no{% endif %}
+
+    {%- if network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
+    ProxyCommand connect -H {{ network.proxy.host }}:{{ network.proxy.port }} %h %p
+    {%- endif %}

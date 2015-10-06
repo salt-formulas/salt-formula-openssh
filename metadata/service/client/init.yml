@@ -1,0 +1,10 @@
+applications:
+- openssh
+parameters:
+  openssh:
+    client:
+      enabled: true
+      user:
+        root:
+          enabled: true
+          user: ${linux:system:user:root}

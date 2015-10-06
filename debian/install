@@ -1,0 +1,2 @@
+openssh/*             /usr/share/salt-formulas/env/openssh/
+metadata/service/*      /usr/share/salt-formulas/reclass/service/openssh/

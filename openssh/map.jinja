@@ -1,0 +1,61 @@
+{% set server = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['openssh'],
+        'service': 'sshd',
+        'config': '/etc/ssh/sshd_config',
+        'lib_dir': '/usr/lib/openssh',
+        'user': {},
+    },
+    'Debian': {
+        'pkgs': ['openssh-server'],
+        'service': 'ssh',
+        'config': '/etc/ssh/sshd_config',
+        'lib_dir': '/usr/lib/openssh',
+        'user': {},
+    },
+    'MacOS': {
+        'pkgs': ['openssh'],
+        'service': 'ssh',
+        'config': '/etc/sshd_config',
+        'lib_dir': '/usr/lib/openssh',
+        'user': {},
+    },
+    'RedHat': {
+        'pkgs': ['openssh'],
+        'service': 'sshd',
+        'config': '/etc/ssh/sshd_config',
+        'lib_dir': '/usr/libexec/openssh',
+        'user': {},
+    },
+}, merge=salt['pillar.get']('openssh:server')) %}
+
+{% set client = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['openssh'],
+        'proxy_pkgs': ['openssh'],
+        'config': '/etc/ssh/ssh_config',
+        'forward_agent': True,
+        'gssapi_authentication': False,
+    },
+    'Debian': {
+        'pkgs': ['openssh-client'],
+        'proxy_pkgs': ['connect-proxy'],
+        'config': '/etc/ssh/ssh_config',
+        'forward_agent': True,
+        'gssapi_authentication': False,
+    },
+    'MacOS': {
+        'pkgs': ['openssh'],
+        'proxy_pkgs': ['connect-proxy'],
+        'config': '/etc/ssh/ssh_config',
+        'forward_agent': True,
+        'gssapi_authentication': False,
+    },
+    'RedHat': {
+        'pkgs': ['openssh-clients'],
+        'proxy_pkgs': ['connect-proxy'],
+        'config': '/etc/ssh/ssh_config',
+        'forward_agent': True,
+        'gssapi_authentication': False,
+    },
+}, merge=salt['pillar.get']('openssh:client')) %}
