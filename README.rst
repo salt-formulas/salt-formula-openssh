@@ -75,6 +75,18 @@ OpenSSH server with auth keys for users
             public_keys:
             - ${public_keys:newt}
 
+OpenSSH server for use with FreeIPA
+
+.. code-block:: yaml
+
+    openssh:
+      server:
+        enabled: true
+        public_key_auth: true
+        authorized_keys_command:
+          command: /usr/bin/sss_ssh_authorizedkeys
+          user: nobody
+
 Read more
 =========
 

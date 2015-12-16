@@ -38,6 +38,11 @@ RSAAuthentication yes
 PubkeyAuthentication {% if server.get('public_key_auth', True) %}yes{% else %}no{% endif %}
 AuthorizedKeysFile     %h/.ssh/authorized_keys
 
+{%- if server.authorized_keys_command is defined %}
+AuthorizedKeysCommand {{ server.authorized_keys_command.command }}
+AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('user', 'nobody') }}
+{%- endif %}
+
 # Don't read the user's ~/.rhosts and ~/.shosts files
 IgnoreRhosts yes
 # For this to work you will also need host keys in /etc/ssh_known_hosts
@@ -60,13 +65,21 @@ ChallengeResponseAuthentication no
 PasswordAuthentication {% if server.get('password_auth', True) %}yes{% else %}no{% endif %}
 
 # Kerberos options
-#KerberosAuthentication no
+{%- if server.get('kerberos_auth', False) %}
+KerberosAuthentication yes
+{%- else %}
+KerberosAuthentication no
+{%- endif %}
 #KerberosGetAFSToken no
 #KerberosOrLocalPasswd yes
 #KerberosTicketCleanup yes
 
 # GSSAPI options
-#GSSAPIAuthentication no
+{%- if server.get('gssapi_auth', False) %}
+GSSAPIAuthentication yes
+{%- else %}
+GSSAPIAuthentication no
+{%- endif %}
 #GSSAPICleanupCredentials yes
 
 X11Forwarding yes
