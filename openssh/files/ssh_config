@@ -12,3 +12,4 @@ Host *
     {%- if network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
     ProxyCommand connect -H {{ network.proxy.host }}:{{ network.proxy.port }} %h %p
     {%- endif %}
+    {% if client.stricthostkeychecking is not defined %}{% else %}StrictHostKeyChecking no{% endif %}
