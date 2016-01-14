@@ -3,13 +3,13 @@
 {%- if client.enabled %}
 
 openssh_client_packages:
-  pkg.installed:
+  pkg.latest:
   - names: {{ client.pkgs }}
 
 {%- if network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
 
 openssh_client_proxy_packages:
-  pkg.installed:
+  pkg.latest:
   - names: {{ client.proxy_pkgs }}
 
 {%- endif %}

@@ -2,7 +2,7 @@
 {%- if server.enabled %}
 
 openssh_server_packages:
-  pkg.installed:
+  pkg.latest:
   - names: {{ server.pkgs }}
 
 {%- if server.banner is defined %}
