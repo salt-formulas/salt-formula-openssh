@@ -34,28 +34,20 @@
         'pkgs': ['openssh'],
         'proxy_pkgs': ['openssh'],
         'config': '/etc/ssh/ssh_config',
-        'forward_agent': True,
-        'gssapi_authentication': False,
     },
     'Debian': {
         'pkgs': ['openssh-client'],
         'proxy_pkgs': ['connect-proxy'],
         'config': '/etc/ssh/ssh_config',
-        'forward_agent': True,
-        'gssapi_authentication': False,
     },
     'MacOS': {
         'pkgs': ['openssh'],
         'proxy_pkgs': ['connect-proxy'],
         'config': '/etc/ssh/ssh_config',
-        'forward_agent': True,
-        'gssapi_authentication': False,
     },
     'RedHat': {
         'pkgs': ['openssh-clients'],
         'proxy_pkgs': ['connect-proxy'],
         'config': '/etc/ssh/ssh_config',
-        'forward_agent': True,
-        'gssapi_authentication': False,
     },
 }, merge=salt['pillar.get']('openssh:client')) %}

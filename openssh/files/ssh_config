@@ -3,13 +3,20 @@
 
 Host *
 
-    SendEnv LANG LC_*
-    HashKnownHosts yes
-    GSSAPIAuthentication {% if client.gssapi_authentication %}yes{% else %}no{% endif %}
-    GSSAPIDelegateCredentials no
-    ForwardAgent {% if client.forward_agent %}yes{% else %}no{% endif %}
+    SendEnv {% if client.send_env is defined %}{{ client.send_env }}{% else %}LANG LC_*{% endif %}
+    HashKnownHosts {% if client.get('hash_known_hosts', True) %}yes{% else %}no{% endif %}
+    GSSAPIAuthentication {% if client.get('gssapi_authentication', False) %}yes{% else %}no{% endif %}
+    GSSAPIDelegateCredentials {% if client.get('gssapi_delegate_credentials', False) %}yes{% else %}no{% endif %}
+    PubkeyAuthentication {% if client.get('pubkey_authentication', True) %}yes{% else %}no{% endif %}
+    ForwardAgent {% if client.get('forward_agent', False) %}yes{% else %}no{% endif %}
 
-    {%- if network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
+    {%- if client.global_known_hosts is defined %}
+    GlobalKnownHostsFile {{ client.global_known_hosts }}
+    {%- endif %}
+
+    {%- if client.proxy_command is defined %}
+    ProxyCommand {{ client.proxy_command }}
+    {%- elif network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
     ProxyCommand connect -H {{ network.proxy.host }}:{{ network.proxy.port }} %h %p
     {%- endif %}
     {% if client.stricthostkeychecking is not defined %}{% else %}StrictHostKeyChecking no{% endif %}
