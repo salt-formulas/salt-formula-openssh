@@ -54,6 +54,8 @@ OpenSSH server with configuration parameters
         password_auth: true
         host_auth: true
         banner: Welcome to server!
+        bind:
+          address: 0.0.0.0
 
 OpenSSH server with auth keys for users
 
@@ -62,6 +64,8 @@ OpenSSH server with auth keys for users
     openssh:
       server:
         enabled: true
+        bind:
+          address: 0.0.0.0
         ...
         user:
           newt:
@@ -82,6 +86,8 @@ OpenSSH server for use with FreeIPA
     openssh:
       server:
         enabled: true
+        bind:
+          address: 0.0.0.0
         public_key_auth: true
         authorized_keys_command:
           command: /usr/bin/sss_ssh_authorizedkeys
