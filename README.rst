@@ -56,6 +56,7 @@ OpenSSH server with configuration parameters
         banner: Welcome to server!
         bind:
           address: 0.0.0.0
+          port: 22
 
 OpenSSH server with auth keys for users
 
@@ -66,6 +67,7 @@ OpenSSH server with auth keys for users
         enabled: true
         bind:
           address: 0.0.0.0
+          port: 22
         ...
         user:
           newt:
@@ -88,6 +90,7 @@ OpenSSH server for use with FreeIPA
         enabled: true
         bind:
           address: 0.0.0.0
+          port: 22
         public_key_auth: true
         authorized_keys_command:
           command: /usr/bin/sss_ssh_authorizedkeys

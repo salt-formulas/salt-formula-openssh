@@ -4,7 +4,7 @@
 # See the sshd_config(5) manpage for details
 
 # What ports, IPs and protocols we listen for
-Port 22
+Port {{ server.bind.port }}
 
 # Use these options to restrict which interfaces/protocols sshd will bind to
 #ListenAddress ::
