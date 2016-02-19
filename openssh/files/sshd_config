@@ -85,10 +85,10 @@ GSSAPIAuthentication no
 {%- endif %}
 #GSSAPICleanupCredentials yes
 
-X11Forwarding yes
-X11DisplayOffset 10
-PrintMotd no
-PrintLastLog yes
+X11Forwarding {% if server.get('x11', {}).get('forwarding', True) %}yes{% else %}no{% endif %}
+X11DisplayOffset {{ server.get('x11', {}).get('display_offset', '10') }}
+PrintMotd {% if server.get('print_motd', False) %}yes{% else %}no{% endif %}
+PrintLastLog {% if server.get('print_lastlog', True) %}yes{% else %}no{% endif %}
 TCPKeepAlive yes
 #UseLogin no
 
