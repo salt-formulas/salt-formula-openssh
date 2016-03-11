@@ -58,7 +58,9 @@ OpenSSH server with configuration parameters
           address: 0.0.0.0
           port: 22
 
-OpenSSH server with auth keys for users
+OpenSSH server with auth keys for users.
+Parameter ``purge`` will ensure exact authorized_keys contents co undefined
+keys will be removed.
 
 .. code-block:: yaml
 
@@ -77,6 +79,7 @@ OpenSSH server with auth keys for users
             - ${public_keys:newt}
           root:
             enabled: true
+            purge: true
             user: ${linux:system:user:root}
             public_keys:
             - ${public_keys:newt}

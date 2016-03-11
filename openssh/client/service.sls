@@ -30,7 +30,7 @@ openssh_client_config:
 {{ user.user.home }}/.ssh:
   file.directory:
   - user: {{ user.user.name }}
-  - mode: 755
+  - mode: 700
   - makedirs: true
   - require:
     - pkg: openssh_client_packages
