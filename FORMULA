@@ -1,0 +1,8 @@
+name: openssh
+os: Arch, Debian, MacOS, RedHat
+os_family: Arch, Debian, MacOS, RedHat
+version: 201606
+release: 1
+summary: OpenSSH salt formula
+description: Install and configure OpenSSH server and setup OpenSSH for system users.
+top_level_dir: openssh
