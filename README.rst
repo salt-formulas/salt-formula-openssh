@@ -84,6 +84,19 @@ keys will be removed.
             public_keys:
             - ${public_keys:newt}
 
+You can also bind openssh on multiple addresses and ports:
+
+.. code-block:: yaml
+
+    openssh:
+      server:
+        enabled: true
+        binds:
+          - address: 127.0.0.1
+            port: 22
+          - address: 192.168.1.1
+            port: 2222
+
 OpenSSH server for use with FreeIPA
 
 .. code-block:: yaml

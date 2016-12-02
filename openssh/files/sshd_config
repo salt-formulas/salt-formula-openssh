@@ -3,13 +3,17 @@
 # Package generated configuration file
 # See the sshd_config(5) manpage for details
 
+{%- if server.binds is defined %}
+{%- for bind in server.binds %}
+ListenAddress {{ bind.address|default("0.0.0.0") }}:{{ bind.port|default("22") }}
+{%- endfor %}
+{%- else %}
 # What ports, IPs and protocols we listen for
 Port {{ server.bind.port }}
 
 # Use these options to restrict which interfaces/protocols sshd will bind to
-#ListenAddress ::
-#ListenAddress 0.0.0.0
 ListenAddress {{ server.bind.address }}
+{%- endif %}
 
 Protocol 2
 # HostKeys for protocol version 2
