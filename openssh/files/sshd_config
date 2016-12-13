@@ -50,6 +50,19 @@ AuthorizedKeysCommand {{ server.authorized_keys_command.command }}
 AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('user', 'nobody') }}
 {%- endif %}
 
+{% if server.get('deny_users', False) %}
+DenyUsers {{ server.deny_users|join(' ') }}
+{% endif %}
+{% if server.get('allow_users', False) %}
+AllowUsers {{ server.allow_users|join(' ') }}
+{% endif %}
+{% if server.get('deny_groups', False) %}
+DenyGroups {{ server.deny_groups|join(' ') }}
+{% endif %}
+{% if server.get('allow_groups', False) %}
+AllowGroups {{ server.allow_groups|join(' ') }}
+{% endif %}
+
 # Don't read the user's ~/.rhosts and ~/.shosts files
 IgnoreRhosts yes
 # For this to work you will also need host keys in /etc/ssh_known_hosts
