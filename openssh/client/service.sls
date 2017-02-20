@@ -27,6 +27,8 @@ openssh_client_config:
 
 {%- for user_name, user in client.user.iteritems() %}
 
+{%- if user.get('enabled', True) %}
+
 {{ user.user.home }}/.ssh:
   file.directory:
   - user: {{ user.user.name }}
@@ -44,6 +46,8 @@ openssh_client_{{ user_name }}_config:
   - template: jinja
   - require:
     - pkg: openssh_client_packages
+
+{%- endif %}
 
 {%- endfor %}
 

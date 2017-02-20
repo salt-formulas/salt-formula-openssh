@@ -3,7 +3,7 @@ openssh:
     enabled: true
     user:
       test:
-        enabled: true
+        enabled: false
         name: test
         user: 
           enabled: true

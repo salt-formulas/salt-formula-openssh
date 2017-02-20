@@ -14,4 +14,6 @@ openssh:
           home: /home/test
     public_keys:
     - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCts9Ry.........
-
+    bind:
+      address: 0.0.0.0
+      port: 8000

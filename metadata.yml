@@ -1,7 +1,6 @@
 name: "openssh"
 version: "0.2"
-source: "https://github.com/tcpcloud/salt-formula-openssh"
+source: "https://github.com/salt-formulas/salt-formula-openssh"
 dependencies:
 - name: linux
-  source: "https://github.com/tcpcloud/salt-formula-linux"
-
+  source: "https://github.com/salt-formulas/salt-formula-linux"
