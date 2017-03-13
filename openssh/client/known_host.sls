@@ -4,7 +4,7 @@
 include:
 - openssh.client.service
 
-{%- for user_name, user in client.user.iteritems() %}
+{%- for user_name, user in client.get('user', {}).iteritems() %}
 
 {%- for host in user.get('known_hosts', []) %}
 

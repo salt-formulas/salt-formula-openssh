@@ -25,7 +25,7 @@ openssh_client_config:
   - require:
     - pkg: openssh_client_packages
 
-{%- for user_name, user in client.user.iteritems() %}
+{%- for user_name, user in client.get('user', {}).iteritems() %}
 
 {%- if user.get('enabled', True) %}
 
