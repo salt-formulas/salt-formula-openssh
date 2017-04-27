@@ -20,7 +20,9 @@ OpenSSH client with shared private key
         user:
           root:
             enabled: true
-            private_key: ${private_keys:vaio.newt.cz}
+            private_key:
+              type: rsa
+              key: ${_param:root_private_key}
             user: ${linux:system:user:root}
 
 OpenSSH client with individual private key and known host
