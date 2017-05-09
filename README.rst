@@ -36,6 +36,7 @@ OpenSSH client with individual private key and known host
           root:
             enabled: true
             user: ${linux:system:user:root}
+            home: ${linux:system:user:root:home} 
             known_hosts:
             - name: repo.domain.com
               type: rsa
