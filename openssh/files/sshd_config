@@ -128,6 +128,9 @@ Banner /etc/banner
 
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*
+{%- if server.get('accept_env', [])|length > 0 %}
+AcceptEnv {{ server.accept_env|join(' ') }}
+{%- endif %}
 
 Subsystem sftp {{ server.lib_dir }}/sftp-server
 
