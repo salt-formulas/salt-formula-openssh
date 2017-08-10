@@ -41,6 +41,16 @@ OpenSSH client with individual private key and known host
               type: rsa
               fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
 
+Configure keep alive settings:
+
+.. code-block:: yaml
+
+    openssh:
+      client:
+        alive:
+          interval: 600
+          count: 3
+
 OpenSSH server
 --------------
 
@@ -113,6 +123,19 @@ OpenSSH server for use with FreeIPA
         authorized_keys_command:
           command: /usr/bin/sss_ssh_authorizedkeys
           user: nobody
+
+Configure keep alive settings:
+
+.. code-block:: yaml
+
+    openssh:
+      server:
+        alive:
+          keep: yes
+          interval: 600
+          count: 3
+    #
+    # will give you an timeout of 30 minutes (600 sec x 3)
 
 Read more
 =========

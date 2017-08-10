@@ -20,3 +20,10 @@ Host *
     ProxyCommand connect -H {{ network.proxy.host }}:{{ network.proxy.port }} %h %p
     {%- endif %}
     {% if client.stricthostkeychecking is not defined %}{% else %}StrictHostKeyChecking no{% endif %}
+    {%- if client.get('alive', {'interval': None}).interval is number %}
+    ServerAliveInterval {{ client.alive.interval }}
+    {% endif %}
+    {%- if client.get('alive', {'count': None}).count is number %}
+    ServerAliveCountMax {{ client.alive.count }}
+    {% endif %}
+

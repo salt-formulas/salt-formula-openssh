@@ -111,8 +111,15 @@ X11Forwarding {% if server.get('x11', {}).get('forwarding', True) %}yes{% else %
 X11DisplayOffset {{ server.get('x11', {}).get('display_offset', '10') }}
 PrintMotd {% if server.get('print_motd', False) %}yes{% else %}no{% endif %}
 PrintLastLog {% if server.get('print_lastlog', True) %}yes{% else %}no{% endif %}
-TCPKeepAlive yes
+TCPKeepAlive {{ server.get('alive', {}).get('keep','yes') }}
 #UseLogin no
+
+{%- if server.get('alive', {'interval': None}).interval is number %}
+ClientAliveInterval {{ server.alive.interval }}
+{% endif %}
+{%- if server.get('alive', {'count': None}).count is number %}
+ClientAliveCountMax {{ server.alive.count }}
+{% endif %}
 
 {%- if server.max_sessions is defined %}
 MaxSessions {{ server.max_sessions }}
