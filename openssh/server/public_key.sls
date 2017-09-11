@@ -3,6 +3,8 @@
 
 {%- for user_name, user in server.user.iteritems() %}
 
+{%- if user.get('enabled', False) %}
+
 {%- if user.public_keys is defined %}
 
 {%- if user.get('purge', False) %}
@@ -45,6 +47,8 @@
 {{ user.user.name }}_auth_keys:
   file.absent:
   - name: {{ user.user.home }}/.ssh/authorized_keys
+{%- endif %}
+
 {%- endif %}
 
 {%- endif %}
