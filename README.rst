@@ -40,6 +40,7 @@ OpenSSH client with individual private key and known host
             - name: repo.domain.com
               type: rsa
               fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
+              backupninja_server_finger_print: sha256|md5
 
 Configure keep alive settings:
 

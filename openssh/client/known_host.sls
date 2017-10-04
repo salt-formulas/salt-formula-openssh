@@ -13,6 +13,7 @@ include:
   - user: {{ user_name }}
   - name: {{ host.name }}
   - enc: {{ host.get('type', 'ecdsa') }}
+  - fingerprint_hash_type: {{ host.get('fingerprint_hash_type', 'md5') }}
   - fingerprint: {{ host.fingerprint }}
   - require:
     - pkg: openssh_client_packages
