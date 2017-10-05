@@ -27,7 +27,7 @@ UsePrivilegeSeparation yes
 
 # Lifetime and size of ephemeral version 1 server key
 KeyRegenerationInterval 3600
-ServerKeyBits 768
+ServerKeyBits {{ server.get('server_key_bits', '2048') }}
 
 # Logging
 SyslogFacility AUTH
@@ -47,8 +47,13 @@ AuthorizedKeysFile     %h/.ssh/authorized_keys
 
 {%- if server.authorized_keys_command is defined %}
 AuthorizedKeysCommand {{ server.authorized_keys_command.command }}
-AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('user', 'nobody') }}
+{% if (grains['os_family'] == 'RedHat' and grains['osmajorrelease'] != '6') or grains['os_family'] != 'RedHat' %}
+{%- if server.authorized_keys_command.user is defined %}
+AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('User', 'nobody') }}
 {%- endif %}
+{%- endif %}
+{%- endif %}
+
 
 {% if server.get('deny_users', False) %}
 DenyUsers {{ server.deny_users|join(' ') }}
@@ -106,8 +111,15 @@ X11Forwarding {% if server.get('x11', {}).get('forwarding', True) %}yes{% else %
 X11DisplayOffset {{ server.get('x11', {}).get('display_offset', '10') }}
 PrintMotd {% if server.get('print_motd', False) %}yes{% else %}no{% endif %}
 PrintLastLog {% if server.get('print_lastlog', True) %}yes{% else %}no{% endif %}
-TCPKeepAlive yes
+TCPKeepAlive {{ server.get('alive', {}).get('keep','yes') }}
 #UseLogin no
+
+{%- if server.get('alive', {'interval': None}).interval is number %}
+ClientAliveInterval {{ server.alive.interval }}
+{% endif %}
+{%- if server.get('alive', {'count': None}).count is number %}
+ClientAliveCountMax {{ server.alive.count }}
+{% endif %}
 
 {%- if server.max_sessions is defined %}
 MaxSessions {{ server.max_sessions }}
@@ -128,6 +140,9 @@ Banner /etc/banner
 
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*
+{%- if server.get('accept_env', [])|length > 0 %}
+AcceptEnv {{ server.accept_env|join(' ') }}
+{%- endif %}
 
 Subsystem sftp {{ server.lib_dir }}/sftp-server
 

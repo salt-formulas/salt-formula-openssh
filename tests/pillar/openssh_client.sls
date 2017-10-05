@@ -16,4 +16,7 @@ openssh:
     - name: repo.domain.com
       type: rsa
       fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
+    alive:
+      interval: 600
+      count: 3
 
