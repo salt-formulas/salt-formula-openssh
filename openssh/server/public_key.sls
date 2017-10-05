@@ -53,15 +53,6 @@
 
 {%- endif %}
 
-
-{%- else %}
-
-{{ user.user.name }}_auth_keys:
-  file.absent:
-  - name: {{ user.user.home }}/.ssh/authorized_keys
-
-{%- endif %}
-
 {%- endfor %}
 
 {%- endif %}
