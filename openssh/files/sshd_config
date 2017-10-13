@@ -54,6 +54,9 @@ AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('User', 'nobody'
 {%- endif %}
 {%- endif %}
 
+{%- if server.force_command is defined %}
+ForceCommand {{ server.force_command }}
+{%- endif %}
 
 {% if server.get('deny_users', False) %}
 DenyUsers {{ server.deny_users|join(' ') }}

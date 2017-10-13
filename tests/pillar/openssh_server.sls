@@ -17,6 +17,7 @@ openssh:
     bind:
       address: 0.0.0.0
       port: 8000
+    force_command: /usr/bin/toilet
     alive:
       keep: no
       interval: 600
