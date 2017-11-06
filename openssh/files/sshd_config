@@ -160,3 +160,6 @@ Subsystem sftp {{ server.lib_dir }}/sftp-server
 # and ChallengeResponseAuthentication to 'no'.
 UsePAM yes
 
+{%- if server.get('dss_enabled', false) %}
+PubkeyAcceptedKeyTypes=+ssh-dss
+{%- endif %}

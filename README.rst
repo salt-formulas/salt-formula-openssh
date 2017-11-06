@@ -138,6 +138,14 @@ Configure keep alive settings:
     #
     # will give you an timeout of 30 minutes (600 sec x 3)
 
+Enable DSA legacy keys:
+
+.. code-block:: yaml
+
+    openssh:
+      server:
+        dss_enabled: true
+
 Read more
 =========
 
