@@ -1,11 +1,12 @@
 openssh:
   server:
     enabled: true
+    use_dns: False
     user:
       test:
         enabled: true
         name: test
-        user: 
+        user:
           enabled: true
           name: test
           sudo: true

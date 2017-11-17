@@ -110,6 +110,9 @@ GSSAPIAuthentication no
 {%- endif %}
 #GSSAPICleanupCredentials yes
 
+{%- if server.use_dns is defined %}
+UseDNS {{ server.use_dns }}
+{%- endif %}
 X11Forwarding {% if server.get('x11', {}).get('forwarding', True) %}yes{% else %}no{% endif %}
 X11DisplayOffset {{ server.get('x11', {}).get('display_offset', '10') }}
 PrintMotd {% if server.get('print_motd', False) %}yes{% else %}no{% endif %}

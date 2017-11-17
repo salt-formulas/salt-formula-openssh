@@ -17,6 +17,7 @@ OpenSSH client with shared private key
     openssh:
       client:
         enabled: true
+        use_dns: False
         user:
           root:
             enabled: true
