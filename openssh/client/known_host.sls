@@ -4,13 +4,13 @@
 include:
 - openssh.client.service
 
-{%- for user_name, user in client.get('user', {}).iteritems() %}
+{%- for xxx, user in client.get('user', {}).iteritems() %}
 
 {%- for host in user.get('known_hosts', []) %}
 
-{{ user_name }}_known_hosts_{{ host.name }}:
+{{ user.user.name }}_known_hosts_{{ host.name }}:
   ssh_known_hosts.present:
-  - user: {{ user_name }}
+  - user: {{ user.user.name }}
   - name: {{ host.name }}
   - enc: {{ host.get('type', 'ecdsa') }}
   {%- if host.fingerprint_hash_type is defined %}

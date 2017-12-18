@@ -7,14 +7,14 @@
 
 {%- if user.public_keys is defined %}
 
-{%- if user.get('purge', False) %}
-
 {{ user.user.name }}_ssh_dir:
   file.directory:
   - name: {{ user.user.home }}/.ssh
   - user: {{ user.user.name }}
   - group: {{ user.user.name }}
   - mode: 700
+
+{%- if user.get('purge', False) %}
 
 {{ user.user.name }}_auth_keys:
   file.managed:
@@ -38,6 +38,8 @@
     {%- for public_key in user.public_keys %}
     - {{ public_key.key }}
     {%- endfor %}
+  - require:
+    - file: {{ user.user.name }}_ssh_dir
 
 {%- endif %}
 

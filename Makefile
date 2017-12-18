@@ -27,12 +27,14 @@ KITCHEN_OPTS_TEST?=""
 
 all:
 	@echo "make install - Install into DESTDIR"
+	@echo "make lint    - Run lint tests"
 	@echo "make test    - Run tests"
 	@echo "make kitchen - Run Kitchen CI tests (create, converge, verify)"
 	@echo "make clean   - Cleanup after tests run"
 	@echo "make release-major  - Generate new major release"
 	@echo "make release-minor  - Generate new minor release"
 	@echo "make changelog      - Show changes since last release"
+	@echo "make test-model-validate      - Run salt jsonschema validation"
 
 install:
 	# Formula
@@ -45,8 +47,15 @@ install:
 	[ -d $(DESTDIR)/$(RECLASSDIR)/service/$(FORMULANAME) ] || mkdir -p $(DESTDIR)/$(RECLASSDIR)/service/$(FORMULANAME)
 	cp -a metadata/service/* $(DESTDIR)/$(RECLASSDIR)/service/$(FORMULANAME)
 
+lint:
+	[ ! -d tests ] || (cd tests; ./run_tests.sh lint)
+
 test:
 	[ ! -d tests ] || (cd tests; ./run_tests.sh)
+
+test-model-validate:
+	# TODO make it actually fail
+	[ ! -d $(FORMULANAME)/schemas/ ] || (cd tests; ./run_tests.sh model-validate)
 
 release-major: check-changes
 	@echo "Current version is $(VERSION), new version is $(NEW_MAJOR_VERSION)"

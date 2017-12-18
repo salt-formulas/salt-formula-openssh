@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+###
+# Script requirments:
+#  apt-get install -y python-yaml virtualenv git
 set -e
 [ -n "$DEBUG" ] && set -x
 
@@ -14,11 +17,13 @@ BUILDDIR=${BUILDDIR:-${CURDIR}/build}
 VENV_DIR=${VENV_DIR:-${BUILDDIR}/virtualenv}
 MOCK_BIN_DIR=${MOCK_BIN_DIR:-${CURDIR}/mock_bin}
 DEPSDIR=${BUILDDIR}/deps
+SCHEMARDIR=${SCHEMARDIR:-"${CURDIR}/../${FORMULA_NAME}/schemas/"}
 
 SALT_FILE_DIR=${SALT_FILE_DIR:-${BUILDDIR}/file_root}
 SALT_PILLAR_DIR=${SALT_PILLAR_DIR:-${BUILDDIR}/pillar_root}
 SALT_CONFIG_DIR=${SALT_CONFIG_DIR:-${BUILDDIR}/salt}
 SALT_CACHE_DIR=${SALT_CACHE_DIR:-${SALT_CONFIG_DIR}/cache}
+SALT_CACHE_EXTMODS_DIR=${SALT_CACHE_EXTMODS_DIR:-${SALT_CONFIG_DIR}/cache_master_extmods}
 
 SALT_OPTS="${SALT_OPTS} --retcode-passthrough --local -c ${SALT_CONFIG_DIR} --log-file=/dev/null"
 
@@ -28,11 +33,11 @@ fi
 
 ## Functions
 log_info() {
-    echo "[INFO] $*"
+    echo -e "[INFO] $*"
 }
 
 log_err() {
-    echo "[ERROR] $*" >&2
+    echo -e "[ERROR] $*" >&2
 }
 
 setup_virtualenv() {
@@ -40,6 +45,9 @@ setup_virtualenv() {
     virtualenv $VENV_DIR
     source ${VENV_DIR}/bin/activate
     pip install salt${PIP_SALT_VERSION}
+    if [[ -f ${CURDIR}/test-requirements.txt ]]; then
+       pip install -r ${CURDIR}/test-requirements.txt
+    fi
 }
 
 setup_mock_bin() {
@@ -65,6 +73,7 @@ setup_salt() {
     [ ! -d ${SALT_FILE_DIR} ] && mkdir -p ${SALT_FILE_DIR}
     [ ! -d ${SALT_CONFIG_DIR} ] && mkdir -p ${SALT_CONFIG_DIR}
     [ ! -d ${SALT_CACHE_DIR} ] && mkdir -p ${SALT_CACHE_DIR}
+    [ ! -d ${SALT_CACHE_EXTMODS_DIR} ] && mkdir -p ${SALT_CACHE_EXTMODS_DIR}
 
     echo "base:" > ${SALT_FILE_DIR}/top.sls
     for pillar in ${PILLARDIR}/*.sls; do
@@ -76,6 +85,7 @@ setup_salt() {
     cat << EOF > ${SALT_CONFIG_DIR}/minion
 file_client: local
 cachedir: ${SALT_CACHE_DIR}
+extension_modules:  ${SALT_CACHE_EXTMODS_DIR}
 verify_env: False
 minion_id_caching: False
 
@@ -83,7 +93,6 @@ file_roots:
   base:
   - ${SALT_FILE_DIR}
   - ${CURDIR}/..
-  - /usr/share/salt-formulas/env
 
 pillar_roots:
   base:
@@ -93,13 +102,13 @@ EOF
 }
 
 fetch_dependency() {
+    # example: fetch_dependency "linux:https://github.com/salt-formulas/salt-formula-linux"
     dep_name="$(echo $1|cut -d : -f 1)"
     dep_source="$(echo $1|cut -d : -f 2-)"
     dep_root="${DEPSDIR}/$(basename $dep_source .git)"
     dep_metadata="${dep_root}/metadata.yml"
 
-    [ -d /usr/share/salt-formulas/env/${dep_name} ] && log_info "Dependency $dep_name already present in system-wide salt env" && return 0
-    [ -d $dep_root ] && log_info "Dependency $dep_name already fetched" && return 0
+    [ -d $dep_root ] && { log_info "Dependency $dep_name already fetched"; return 0; }
 
     log_info "Fetching dependency $dep_name"
     [ ! -d ${DEPSDIR} ] && mkdir -p ${DEPSDIR}
@@ -107,6 +116,19 @@ fetch_dependency() {
     ln -s ${dep_root}/${dep_name} ${SALT_FILE_DIR}/${dep_name}
 
     METADATA="${dep_metadata}" install_dependencies
+}
+
+link_modules(){
+    # Link modules *.py files to temporary salt-root
+    local SALT_ROOT=${1:-$SALT_FILE_DIR}
+    local SALT_ENV=${2:-$DEPSDIR}
+
+    mkdir -p "${SALT_ROOT}/_modules/"
+    # from git, development versions
+    find ${SALT_ENV} -maxdepth 3 -mindepth 3 -path '*_modules*' -iname "*.py" -type f -print0 | while read -d $'\0' file; do
+      ln -fs $(readlink -e ${file}) "$SALT_ROOT"/_modules/$(basename ${file}) ;
+    done
+    salt_run saltutil.sync_all
 }
 
 install_dependencies() {
@@ -124,18 +146,29 @@ clean() {
 }
 
 salt_run() {
-    [ -e ${VEN_DIR}/bin/activate ] && source ${VENV_DIR}/bin/activate
+    [ -e ${VENV_DIR}/bin/activate ] && source ${VENV_DIR}/bin/activate
     salt-call ${SALT_OPTS} $*
 }
 
 prepare() {
     [ -d ${BUILDDIR} ] && mkdir -p ${BUILDDIR}
 
-    which salt-call || setup_virtualenv
+    [[ ! -f "${VENV_DIR}/bin/activate" ]] && setup_virtualenv
     setup_mock_bin
     setup_pillar
     setup_salt
     install_dependencies
+}
+
+lint_releasenotes() {
+    [[ ! -f "${VENV_DIR}/bin/activate" ]] && setup_virtualenv
+    source ${VENV_DIR}/bin/activate
+    reno lint ${CURDIR}/../
+}
+
+lint() {
+#    lint_releasenotes
+    log_err "TODO: lint_releasenotes"
 }
 
 run() {
@@ -152,7 +185,7 @@ run() {
             meta_name=$(basename ${meta})
             echo "Checking meta ${meta_name} ..."
             salt_run --out=quiet --id=${state_name} cp.get_template ${meta} ${SALT_CACHE_DIR}/${meta_name} \
-              || (log_err "Failed to render meta ${meta} using pillar ${FORMULA_NAME}.${state_name}"; exit 1)
+              || { log_err "Failed to render meta ${meta} using pillar ${FORMULA_NAME}.${state_name}"; exit 1; }
             cat ${SALT_CACHE_DIR}/${meta_name}
         done
     done
@@ -161,7 +194,24 @@ run() {
 real_run() {
     for pillar in ${PILLARDIR}/*.sls; do
         state_name=$(basename ${pillar%.sls})
-        salt_run --id=${state_name} state.sls ${FORMULA_NAME} || (log_err "Execution of ${FORMULA_NAME}.${state_name} failed"; exit 1)
+        salt_run --id=${state_name} state.sls ${FORMULA_NAME} || { log_err "Execution of ${FORMULA_NAME}.${state_name} failed"; exit 1; }
+    done
+}
+
+run_model_validate(){
+    [[ -d ${SCHEMARDIR} ]] || { log_err "${SCHEMARDIR} not found!"; return 1; }
+    # model validator require py modules
+    fetch_dependency "salt:https://github.com/salt-formulas/salt-formula-salt"
+    link_modules
+    # Sync, afer dep's update
+    salt_run saltutil.clear_cache; salt_run saltutil.refresh_pillar; salt_run saltutil.sync_all
+    # Rendered Example:
+    # salt-call --local -c /test1/maas/tests/build/salt --id=maas_cluster modelschema.model_validate maas cluster
+    for role in ${SCHEMARDIR}/*.yaml; do
+        state_name=$(basename "${role%*.yaml}")
+        minion_id="${state_name}"
+        log_info "Processing model_validate for:${FORMULA_NAME} ${state_name} ${minion_id}"
+        salt_run --id=${minion_id} modelschema.model_validate ${FORMULA_NAME} ${state_name} || { log_err "Execution of ${FORMULA_NAME}.${state_name} failed"; exit 1 ; }
     done
 }
 
@@ -187,14 +237,23 @@ case $1 in
     prepare)
         prepare
         ;;
+    lint)
+        lint
+        ;;
     run)
         run
         ;;
     real-run)
         real_run
         ;;
+    model-validate)
+       prepare
+       run_model_validate
+        ;;
     *)
         prepare
+#        lint
         run
+        run_model_validate
         ;;
 esac
