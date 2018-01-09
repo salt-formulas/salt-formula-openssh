@@ -11,6 +11,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-openssh.git
 
 Package: salt-formula-openssh
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass, salt-formula-linux
+Depends: ${misc:Depends}, salt-formula-linux
 Description: OpenSSH salt formula
  Install and configure OpenSSH server and setup OpenSSH for system users.
