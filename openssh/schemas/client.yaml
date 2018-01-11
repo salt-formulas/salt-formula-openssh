@@ -1,0 +1,139 @@
+%YAML 1.1
+---
+"$schema": "http://json-schema.org/draft-06/schema#"
+title: openssh client role
+description: |
+  openssh client (per-user) configurathion
+type: object
+additionalProperties: false
+
+required:
+  - enabled
+  - user
+
+properties:
+  enabled:
+    description: |
+      Enables openssh client configurathion.
+    type: boolean
+  known_hosts:
+    description: List of pre-defined known hosts for ssh access.
+    type: array
+    items:
+      type: object
+      $ref: "#/definitions/_openssh_known_hosts_object"
+    example:
+    - name: repo.domain.com
+      type: rsa
+      fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
+  alive:
+    description: Configure ServerAlive* option
+    type: object
+    parameters:
+      interval:
+        description: |
+          Configure ServerAliveInterval option.
+          Sets a timeout interval in seconds after which if no data has been received
+          from the server, ssh(1) will send a message through the encrypted channel to
+          request a response from the server
+        type: integer
+        example: 600
+      count:
+        description: |
+          Configure ServerAliveCountMax option
+          Sets the number of server alive messages which may be sent without ssh receiving
+          any messages back from the server.
+        type: integer
+        example: 3
+  user:
+    description: |
+      Dict of openssh user's, to be configured.
+      Private|pub key only should be configured.
+    type: object
+    additionalProperties: false
+    minProperties: 1
+    # Define exact user
+    patternProperties:
+      '^\w+$':
+        $ref: "#/definitions/_openssh_client_user"
+
+definitions:
+  _openssh_client_user:
+    description: |
+      Define exactly one openssh user.Private|pub key configurathion.
+    type: object
+    required:
+      - enabled
+      - user
+    parameters:
+      enabled:
+        description: Enable\disable user
+        type: boolean
+      private_key:
+        description: Define one user private_key
+        type: string
+        example: "-----BEGIN RSA PRIVATE KEY-----MIIEowIBAAKCAQEAxL6/rVgCet..."
+      public_key:
+        description: Define one user public_key
+        type: string
+        example: "ssh-rsa AAAAB3NzaXXXXAAAXXXX"
+      key:
+        description: Define user private_key type
+        type: string
+        example: "rsa"
+      user:
+        description: Define user login data. In scope of openssh - uses only to acquire user homepath
+        additionalProperties: false
+        minProperties: 1
+        type: object
+        patternProperties:
+          '^[a-z][-a-z0-9_]*$': #  man 5 adduser.conf
+            $ref: "#/definitions/_global_useradd_user"
+
+  _openssh_known_hosts_object:
+    description: Define exactly one known_hosts object
+    type: object
+    properties:
+      name:
+        type: string
+        example: repo.domain.com
+      type:
+        type: string
+        example: rsa
+      fingerprint:
+        type: string
+        example: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
+
+  _global_useradd_user:
+    description: Define exactly one linux user login data.
+    additionalProperties: false
+    type: object
+    required:
+      - enabled
+      - name
+    properties:
+      enabled:
+        type: boolean
+      home:
+        type: string
+        example: "/home/user123"
+      password:
+        type: string
+        example: "$6$cJ/vINf7$Wof3.L7L1lKqMFAKoTKxESKOZNSNc.K7BkeJNIXY5bETFjbS200njx9j.Y152wfFRoNXs6b3qBEF5Co0uNeyQ0" # r00tme
+      name:
+        type: string
+        example: user123
+      shell:
+        type: string
+        example: "/bin/sh"
+      sudo:
+        type: boolean
+        description: Allow user to use sudo
+      email:
+        type: string
+        example: example@mail.com
+      full_name:
+        type: string
+        example: "Cloud Infrastructure user"
+      uid:
+        type: integer

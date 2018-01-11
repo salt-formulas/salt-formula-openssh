@@ -17,6 +17,7 @@ provisioner:
   state_top:
     base:
       "*":
+        - linux.system.user
         - openssh
   pillars:
     top.sls:
@@ -40,14 +41,15 @@ platforms:
       platform: ubuntu
 
 suites:
-
   - name: openssh_client
     provisioner:
       pillars-from-files:
-        openssh.sls: tests/pillar/openssh_client.sls
+        openssh.sls: tests/pillar/client.sls
 
   - name: openssh_server
     provisioner:
       pillars-from-files:
-        openssh.sls: tests/pillar/openssh_server.sls
+        openssh.sls: tests/pillar/server.sls
+
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

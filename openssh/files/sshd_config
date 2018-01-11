@@ -36,6 +36,7 @@ LogLevel INFO
 # Authentication:
 LoginGraceTime 120
 
+# FIXME: PermitRootLogin its not boolean variable! need to be refactored!
 PermitRootLogin {% if server.get('permit_root_login', False) %}yes{% else %}no{% endif %}
 
 StrictModes yes
