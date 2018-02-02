@@ -42,6 +42,8 @@ openssh_client_{{ user_name }}_config:
   - name: {{ user.user.home }}/.ssh/config
   - user: {{ user.user.name }}
   - source: salt://openssh/files/ssh_config
+  - context:
+      user_name: {{ user_name }}
   - mode: 600
   - template: jinja
   - require:
