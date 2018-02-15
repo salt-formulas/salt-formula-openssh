@@ -34,7 +34,6 @@ all:
 	@echo "make release-major  - Generate new major release"
 	@echo "make release-minor  - Generate new minor release"
 	@echo "make changelog      - Show changes since last release"
-	@echo "make test-model-validate      - Run salt jsonschema validation"
 
 install:
 	# Formula
@@ -53,10 +52,6 @@ lint:
 test:
 	[ ! -d tests ] || (cd tests; ./run_tests.sh)
 
-test-model-validate:
-	# TODO make it actually fail
-	[ ! -d $(FORMULANAME)/schemas/ ] || (cd tests; ./run_tests.sh model-validate)
-
 release-major: check-changes
 	@echo "Current version is $(VERSION), new version is $(NEW_MAJOR_VERSION)"
 	@[ $(VERSION_MAJOR) != $(NEW_MAJOR_VERSION) ] || (echo "Major version $(NEW_MAJOR_VERSION) already released, nothing to do. Do you want release-minor?" && exit 1)
@@ -74,7 +69,7 @@ release-minor: check-changes
 	[ ! -f debian/changelog ] || dch -v $(VERSION_MAJOR).$(NEW_MINOR_VERSION) -m --force-distribution -D `dpkg-parsechangelog -S Distribution` "New version"
 	make genchangelog-$(VERSION_MAJOR).$(NEW_MINOR_VERSION)
 	(git add -u; git commit -m "Version $(VERSION_MAJOR).$(NEW_MINOR_VERSION)")
-	git tag -s -m $(NEW_MAJOR_VERSION) $(VERSION_MAJOR).$(NEW_MINOR_VERSION)
+	git tag -s -m $(VERSION_MAJOR).$(NEW_MINOR_VERSION) $(VERSION_MAJOR).$(NEW_MINOR_VERSION)
 
 check-changes:
 	@git log --pretty=oneline --decorate $(VERSION)..HEAD | grep -Eqc '.*' || (echo "No new changes since version $(VERSION)"; exit 1)
