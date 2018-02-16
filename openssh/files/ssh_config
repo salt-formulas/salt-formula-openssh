@@ -1,29 +1,71 @@
-{%- from "openssh/map.jinja" import client with context %}
+{%- from "openssh/map.jinja" import client with context -%}
 {%- from "linux/map.jinja" import network with context %}
 
-Host *
+{%- set global_config = {
+    'send_env': 'LANG LC_*',
+    'hash_known_hosts': True,
+    'gssapi_authentication': False,
+    'gssapi_delegate_credentials': False,
+    'pubkey_authentication': True,
+    'forward_agent': False,
+    } %}
 
-    SendEnv {% if client.send_env is defined %}{{ client.send_env }}{% else %}LANG LC_*{% endif %}
-    HashKnownHosts {% if client.get('hash_known_hosts', True) %}yes{% else %}no{% endif %}
-    GSSAPIAuthentication {% if client.get('gssapi_authentication', False) %}yes{% else %}no{% endif %}
-    GSSAPIDelegateCredentials {% if client.get('gssapi_delegate_credentials', False) %}yes{% else %}no{% endif %}
-    PubkeyAuthentication {% if client.get('pubkey_authentication', True) %}yes{% else %}no{% endif %}
-    ForwardAgent {% if client.get('forward_agent', False) %}yes{% else %}no{% endif %}
+{%- macro host_config(pattern, cfg) %}
+Host {{ pattern }}
 
-    {%- if client.global_known_hosts is defined %}
-    GlobalKnownHostsFile {{ client.global_known_hosts }}
+    {%- if cfg.send_env is defined %}
+    SendEnv {{ cfg.send_env }}
     {%- endif %}
-
-    {%- if client.proxy_command is defined %}
-    ProxyCommand {{ client.proxy_command }}
+    {%- if cfg.hash_known_hosts is defined %}
+    HashKnownHosts {% if cfg.hash_known_hosts %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.gssapi_authentication is defined %}
+    GSSAPIAuthentication {% if cfg.gssapi_authentication %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.gssapi_delegate_credentials is defined %}
+    GSSAPIDelegateCredentials {% if cfg.gssapi_delegate_credentials %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.pubkey_authentication is defined %}
+    PubkeyAuthentication {% if cfg.pubkey_authentication %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.forward_agent is defined %}
+    ForwardAgent {% if cfg.forward_agent %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.global_known_hosts is defined %}
+    GlobalKnownHostsFile {{ cfg.global_known_hosts }}
+    {%- endif %}
+    {%- if cfg.proxy_command is defined %}
+    ProxyCommand {{ cfg.proxy_command }}
     {%- elif network.proxy.host != 'none' and not network.proxy.get("pkg_only", true) %}
     ProxyCommand connect -H {{ network.proxy.host }}:{{ network.proxy.port }} %h %p
     {%- endif %}
-    {% if client.stricthostkeychecking is not defined %}{% else %}StrictHostKeyChecking no{% endif %}
-    {%- if client.get('alive', {'interval': None}).interval is number %}
-    ServerAliveInterval {{ client.alive.interval }}
-    {% endif %}
-    {%- if client.get('alive', {'count': None}).count is number %}
-    ServerAliveCountMax {{ client.alive.count }}
-    {% endif %}
+    {%- if cfg.stricthostkeychecking is defined %}
+    StrictHostKeyChecking {% if cfg.stricthostkeychecking %}yes{% else %}no{% endif %}
+    {%- endif %}
+    {%- if cfg.userknownhostsfile is defined %}
+    UserKnownHostsFile {{ cfg.userknownhostsfile }}
+    {%- endif %}
+    {%- if cfg.get('alive', {'interval': None}).interval is number %}
+    ServerAliveInterval {{ cfg.alive.interval }}
+    {%- endif %}
+    {%- if cfg.get('alive', {'count': None}).count is number %}
+    ServerAliveCountMax {{ cfg.alive.count }}
+    {%- endif %}
+    {%- if cfg.port is defined %}
+    Port {{ cfg.port }}
+    {%- endif %}
+    {%- if cfg.identityfile is defined %}
+    IdentityFile {{ cfg.identityfile }}
+    {%- endif %}
+{%- endmacro %}
 
+{%- if user_name is not defined %}
+{%- do global_config.update(client) %}
+{{ host_config('*', global_config) }}
+{%- else %}
+    {%- for name, user in client.user.iteritems() %}{% if name == user_name %}
+        {% for pattern, config in user.get('config', {}).iteritems() %}
+{{ host_config(pattern, config) }}
+        {% endfor %}
+    {%- endif %}{%- endfor %}
+{%- endif %}
