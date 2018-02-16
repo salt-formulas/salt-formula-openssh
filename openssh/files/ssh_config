@@ -1,4 +1,4 @@
-{%- from "openssh/map.jinja" import client with context %}
+{%- from "openssh/map.jinja" import client with context -%}
 {%- from "linux/map.jinja" import network with context %}
 
 {%- set global_config = {
