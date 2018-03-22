@@ -36,6 +36,7 @@ openssh_client_config:
   - makedirs: true
   - require:
     - pkg: openssh_client_packages
+    - file: {{ user.user.home }}
 
 openssh_client_{{ user_name }}_config:
   file.managed:
@@ -48,6 +49,7 @@ openssh_client_{{ user_name }}_config:
   - template: jinja
   - require:
     - pkg: openssh_client_packages
+    - file: {{ user.user.home }}/.ssh
 
 {%- endif %}
 
