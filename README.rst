@@ -147,6 +147,18 @@ Enable DSA legacy keys:
       server:
         dss_enabled: true
 
+CIS Compliance
+==============
+
+There is a number of configuration options that make openssh service compliant with
+CIS Benchmark. Those options could be found under metadata/service/server/cis,
+and are not enabled by default. For each CIS item a comprehencive description
+is provided with pillar data.
+
+More about CIS Benchmark could be found online at:
+
+    https://www.cisecurity.org/cis-benchmarks/
+
 Read more
 =========
 

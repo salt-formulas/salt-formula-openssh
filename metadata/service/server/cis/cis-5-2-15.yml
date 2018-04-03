@@ -1,0 +1,45 @@
+# 5.2.15 Ensure SSH warning banner is configured (Scored)
+#
+# Profile Applicability
+# ---------------------
+# - Level 1 - Server
+# - Level 1 - Workstation
+#
+# Description
+# -----------
+# The Banner parameter specifies a file whose contents must be sent to the remote user
+# before authentication is permitted. By default, no banner is displayed.
+#
+# Rationale
+# ---------
+# Banners are used to warn connecting users of the particular site's policy regarding
+# connection. Presenting a warning message prior to the normal user login may assist the
+# prosecution of trespassers on the computer system.
+#
+# Audit
+# -----
+# Run the following command and verify that output matches:
+#
+#   # grep "^Banner" /etc/ssh/sshd_config
+#   Banner /etc/issue.net
+#
+# Remediation
+# -----------
+# Edit the /etc/ssh/sshd_config file to set the parameter as follows:
+#
+#  Banner /etc/issue.net
+
+parameters:
+  openssh:
+    server:
+      banner: |
+        =================================== WARNING ====================================
+        You have accessed a computer managed by ${_param:ssh_banner_company_name}.
+        You are required to have authorisation from ${_param:ssh_banner_company_name}
+        before you proceed and you are strictly limited to use set out within that
+        authorisation. Unauthorised access to or misuse of this system is prohibited
+        and constitutes an offence under the Computer Misuse Act 1990.
+        If you disclose any information obtained through this system without authority
+        ${_param:ssh_banner_company_name} may take legal action against you.
+        ================================================================================
+

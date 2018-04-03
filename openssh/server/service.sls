@@ -7,7 +7,13 @@ openssh_server_packages:
 
 {%- if server.banner is defined %}
 
-/etc/banner:
+{# CIS 5.2.15 requires Banner option configured. It also proposes
+   file name '/etc/issue.net' as a solution, if Banner is not configured.
+   WARNING: Some security scanners accepts only '/etc/issue.net'
+   as a valid banner file name, so please do not change it.
+#}
+
+/etc/issue.net:
   file.managed:
   - user: root
   - group: root

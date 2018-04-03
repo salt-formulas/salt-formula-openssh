@@ -15,13 +15,15 @@ Port {{ server.bind.port }}
 ListenAddress {{ server.bind.address }}
 {%- endif %}
 
-Protocol 2
+Protocol {{ server.get('protocol', 2) }}
+
 # HostKeys for protocol version 2
 HostKey /etc/ssh/ssh_host_rsa_key
 HostKey /etc/ssh/ssh_host_dsa_key
 {%- if grains.os_family != 'CentOS' %}
 HostKey /etc/ssh/ssh_host_ecdsa_key
 {%- endif %}
+
 #Privilege Separation is turned on for security
 UsePrivilegeSeparation yes
 
@@ -31,19 +33,24 @@ ServerKeyBits {{ server.get('server_key_bits', '2048') }}
 
 # Logging
 SyslogFacility AUTH
-LogLevel INFO
 
-# Authentication:
-LoginGraceTime 120
+LogLevel {{ server.get('log_level', 'INFO')|upper }}
 
-# FIXME: PermitRootLogin its not boolean variable! need to be refactored!
-PermitRootLogin {% if server.get('permit_root_login', False) %}yes{% else %}no{% endif %}
+LoginGraceTime {{ server.get('login_grace_time', 120) }}
+
+{%- set permit_root_login = server.get('permit_root_login', 'no') %}
+{%- if permit_root_login not in ('yes', 'no', 'prohibit-password',
+                                 'without-password', 'forced-commands-only') %}
+{# permit_root_login might be boolean for historical reasons #}
+{%- set permit_root_login = {True: 'yes', False: 'no'}.get(permit_root_login, 'no') %}
+{%- endif %}
+PermitRootLogin {{ permit_root_login }}
 
 StrictModes yes
 
 RSAAuthentication yes
 
-PubkeyAuthentication {% if server.get('public_key_auth', True) %}yes{% else %}no{% endif %}
+PubkeyAuthentication {{ 'yes' if server.get('public_key_auth', True) else 'no' }}
 AuthorizedKeysFile     %h/.ssh/authorized_keys
 
 {%- if server.authorized_keys_command is defined %}
@@ -72,26 +79,28 @@ DenyGroups {{ server.deny_groups|join(' ') }}
 AllowGroups {{ server.allow_groups|join(' ') }}
 {% endif %}
 
-# Don't read the user's ~/.rhosts and ~/.shosts files
-IgnoreRhosts yes
+IgnoreRhosts {{ 'yes' if server.get('ignore_rhosts', True) else 'no' }}
+
 # For this to work you will also need host keys in /etc/ssh_known_hosts
 RhostsRSAAuthentication no
 # similar for protocol version 2
 
-HostbasedAuthentication {% if server.get('host_auth', False) %}yes{% else %}no{% endif %}
+HostbasedAuthentication {{ 'yes' if server.get('host_auth', False) else 'no' }}
 
 # Uncomment if you don't trust ~/.ssh/known_hosts for RhostsRSAAuthentication
 #IgnoreUserKnownHosts yes
 
 # To enable empty passwords, change to yes (NOT RECOMMENDED)
-PermitEmptyPasswords no
+PermitEmptyPasswords {{ 'yes' if server.get('permit_empty_passwords', False) else 'no' }}
+
+PermitUserEnvironment {{ 'yes' if server.get('permit_user_environment', False) else 'no' }}
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)
 ChallengeResponseAuthentication no
 
 # Change to no to disable tunnelled clear text passwords
-PasswordAuthentication {% if server.get('password_auth', True) %}yes{% else %}no{% endif %}
+PasswordAuthentication {{ 'yes' if server.get('password_auth', True) else 'no' }}
 
 # Kerberos options
 {%- if server.get('kerberos_auth', False) %}
@@ -114,7 +123,8 @@ GSSAPIAuthentication no
 {%- if server.use_dns is defined %}
 UseDNS {{ server.use_dns }}
 {%- endif %}
-X11Forwarding {% if server.get('x11', {}).get('forwarding', True) %}yes{% else %}no{% endif %}
+
+X11Forwarding {{ 'yes' if server.get('x11', {}).get('forwarding', True) else 'no' }}
 X11DisplayOffset {{ server.get('x11', {}).get('display_offset', '10') }}
 PrintMotd {% if server.get('print_motd', False) %}yes{% else %}no{% endif %}
 PrintLastLog {% if server.get('print_lastlog', True) %}yes{% else %}no{% endif %}
@@ -124,6 +134,7 @@ TCPKeepAlive {{ server.get('alive', {}).get('keep','yes') }}
 {%- if server.get('alive', {'interval': None}).interval is number %}
 ClientAliveInterval {{ server.alive.interval }}
 {% endif %}
+
 {%- if server.get('alive', {'count': None}).count is number %}
 ClientAliveCountMax {{ server.alive.count }}
 {% endif %}
@@ -139,10 +150,16 @@ MaxStartups {{ server.max_startups }}
 #MaxStartups 10:30:60
 {%- endif %}
 
+{%- if server.max_auth_tries is defined %}
+MaxAuthTries {{ server.max_auth_tries }}
+{%- endif %}
+
 {%- if server.banner is defined %}
-Banner /etc/banner
-{%- else %}
-#Banner /etc/banner
+# CIS 5.2.15 requires Banner option configured. It also proposes
+# file name '/etc/issue.net' as a solution, if Banner is not configured.
+# WARNING: Some security scanners accepts only '/etc/issue.net'
+# as a valid banner file name, so please do not change it.
+Banner /etc/issue.net
 {%- endif %}
 
 # Allow client to pass locale environment variables
@@ -167,3 +184,32 @@ UsePAM yes
 {%- if server.get('dss_enabled', false) %}
 PubkeyAcceptedKeyTypes=+ssh-dss
 {%- endif %}
+
+{%- if server.get('mac_algorithms', False) %}
+{%- set supported_macs = ('hmac-md5',
+                          'hmac-md5-96',
+                          'hmac-ripemd160',
+                          'hmac-sha1',
+                          'hmac-sha1-96',
+                          'hmac-sha2-256',
+                          'hmac-sha2-512',
+                          'umac-64@openssh.com',
+                          'umac-128@openssh.com',
+                          'hmac-md5-etm@openssh.com',
+                          'hmac-md5-96-etm@openssh.com',
+                          'hmac-ripemd160-etm@openssh.com',
+                          'hmac-sha1-etm@openssh.com',
+                          'hmac-sha1-96-etm@openssh.com',
+                          'hmac-sha2-256-etm@openssh.com',
+                          'hmac-sha2-512-etm@openssh.com',
+                          'umac-64-etm@openssh.com',
+                          'umac-128-etm@openssh.com') %}
+{%- set mac_algorithms = [] %}
+{%- for k, v in server.mac_algorithms.items() %}
+{%- set _ = mac_algorithms.append(k) if v.get('enabled', False) and k in supported_macs %}
+{%- endfor %}
+{%- if mac_algorithms|length >0 %}
+MACs {{ mac_algorithms|join(',') }}
+{%- endif %}
+{%- endif %}
+
