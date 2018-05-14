@@ -64,6 +64,27 @@ properties:
       which allows the verification of the KDC's identity. The default
       is False (“no”).
     type: boolean
+  syslog_facility:
+    description: |
+      SyslogFacility
+      --------
+      Gives the facility code that is used when logging messages from
+      sshd(8). The possible values are: DAEMON, USER, AUTH, AUTHPRIV,
+      LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
+      The default is AUTH.
+    enum:
+      - daemon
+      - user
+      - auth
+      - authpriv
+      - local0
+      - local1
+      - local2
+      - local3
+      - local4
+      - local5
+      - local6
+      - local7
   log_level:
     description: |
       LogLevel
@@ -243,13 +264,13 @@ properties:
             description: List of pub keys for user (> authorized_keys)
             type: array
             items:
-              - type: object
-                additionalProperties: false
-                properties:
-                  key:
-                    type: string
-                    description: ssh public key
-                    example: "ssh-rsa AAAAXXX username@example.com"
+              type: object
+              additionalProperties: false
+              properties:
+                key:
+                  type: string
+                  description: ssh public key
+                  example: "ssh-rsa AAAAXXX username@example.com"
             example:
             - key: "ssh-rsa AAAAXXX1111 username@example.com"
             - key: "ssh-rsa AAAAXXX2222 username@example.com"

@@ -13,6 +13,7 @@ openssh:
   server:
     enabled: true
     use_dns: yes
+    syslog_facility: auth
     user:
       testusername:
         enabled: true
