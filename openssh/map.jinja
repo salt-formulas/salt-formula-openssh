@@ -5,6 +5,10 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'bind': { 
+          'address': '0.0.0.0',
+          'port': '22',
+         },
     },
     'Debian': {
         'pkgs': ['openssh-server'],
@@ -12,6 +16,10 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'bind': { 
+          'address': '0.0.0.0',
+          'port': '22',
+         },
     },
     'MacOS': {
         'pkgs': ['openssh'],
@@ -19,6 +27,10 @@
         'config': '/etc/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'bind': { 
+          'address': '0.0.0.0',
+          'port': '22',
+         },
     },
     'RedHat': {
         'pkgs': ['openssh'],
@@ -26,6 +38,10 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/libexec/openssh',
         'user': {},
+        'bind': { 
+          'address': '0.0.0.0',
+          'port': '22',
+         },
     },
 }, merge=salt['pillar.get']('openssh:server')) %}
 
