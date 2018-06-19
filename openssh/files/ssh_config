@@ -57,6 +57,9 @@ Host {{ pattern }}
     {%- if cfg.identityfile is defined %}
     IdentityFile {{ cfg.identityfile }}
     {%- endif %}
+    {%- if cfg.username is defined %}
+    User {{ cfg.username }}
+    {%- endif %}
 {%- endmacro %}
 
 {%- if user_name is not defined %}
