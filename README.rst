@@ -1,64 +1,68 @@
-=======
-OpenSSH
-=======
+=====
+Usage
+=====
 
-OpenSSH is a FREE version of the SSH connectivity tools that technical users of the Internet rely on. Users of telnet, rlogin, and ftp may not realize that their password is transmitted across the Internet unencrypted, but it is. OpenSSH encrypts all traffic (including passwords) to effectively eliminate eavesdropping, connection hijacking, and other attacks. Additionally, OpenSSH provides secure tunneling capabilities and several authentication methods, and supports all SSH protocol versions. 
+OpenSSH is a free version of the SSH connectivity tools that technical users
+of the Internet rely on. The passwords of Telnet, remote login (rlogin), and
+File Transfer Protocol (FTP) users are transmitted across the Internet
+unencrypted. OpenSSH encrypts all traffic, including passwords, to effectively
+eliminate eavesdropping, connection hijacking, and other attacks. Additionally,
+OpenSSH provides secure tunneling capabilities and several authentication
+methods, and supports all SSH protocol versions.
 
-Sample pillar
-=============
+This file provides the sample pillars configurations for different use cases.
 
-OpenSSH client
---------------
+**OpenSSH client**
 
-OpenSSH client with shared private key
+* The OpenSSH client configuration with a shared private key:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
-    openssh:
-      client:
-        enabled: true
-        use_dns: False
-        user:
-          root:
-            enabled: true
-            private_key:
-              type: rsa
-              key: ${_param:root_private_key}
-            user: ${linux:system:user:root}
+      openssh:
+        client:
+          enabled: true
+          use_dns: False
+          user:
+            root:
+              enabled: true
+              private_key:
+                type: rsa
+                key: ${_param:root_private_key}
+              user: ${linux:system:user:root}
 
-OpenSSH client with individual private key and known host
+* The OpenSSH client configuration with an individual private key and known
+  host:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
-    openssh:
-      client:
-        enabled: true
-        user:
-          root:
-            enabled: true
-            user: ${linux:system:user:root}
-            known_hosts:
-            - name: repo.domain.com
-              type: rsa
-              fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
-              fingerprint_hash_type: sha256|md5
+      openssh:
+        client:
+          enabled: true
+          user:
+            root:
+              enabled: true
+              user: ${linux:system:user:root}
+              known_hosts:
+              - name: repo.domain.com
+                type: rsa
+                fingerprint: dd:fa:e8:68:b1:ea:ea:a0:63:f1:5a:55:48:e1:7e:37
+                fingerprint_hash_type: sha256|md5
 
-Configure keep alive settings:
+* The OpenSSH client configuration with keep alive settings:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
-    openssh:
-      client:
-        alive:
-          interval: 600
-          count: 3
+     openssh:
+       client:
+         alive:
+           interval: 600
+           count: 3
 
-OpenSSH server
---------------
+**OpenSSH server**
 
-OpenSSH server with configuration parameters
+* The OpenSSH server simple configuration:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
     openssh:
       server:
@@ -72,11 +76,9 @@ OpenSSH server with configuration parameters
           address: 0.0.0.0
           port: 22
 
-OpenSSH server with auth keys for users.
-Parameter ``purge`` will ensure exact authorized_keys contents co undefined
-keys will be removed.
+* The OpenSSH server configuration with auth keys for users:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
     openssh:
       server:
@@ -98,9 +100,14 @@ keys will be removed.
             public_keys:
             - ${public_keys:newt}
 
-You can also bind openssh on multiple addresses and ports:
+  .. note:: Setting the ``purge`` parameter to ``true`` ensures that the exact
+     ``authorized_keys`` contents will be filled explicitly from the model and
+     undefined keys will be removed.
 
-.. code-block:: yaml
+* The OpenSSH server configuration that binds OpenSSH on multiple addresses
+  and ports:
+
+  .. code-block:: yaml
 
     openssh:
       server:
@@ -111,9 +118,9 @@ You can also bind openssh on multiple addresses and ports:
           - address: 192.168.1.1
             port: 2222
 
-OpenSSH server for use with FreeIPA
+* The OpenSSH server with FreeIPA configuration:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
     openssh:
       server:
@@ -126,9 +133,9 @@ OpenSSH server for use with FreeIPA
           command: /usr/bin/sss_ssh_authorizedkeys
           user: nobody
 
-Configure keep alive settings:
+* The OpenSSH server configuration with keep alive settings:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
     openssh:
       server:
@@ -139,63 +146,52 @@ Configure keep alive settings:
     #
     # will give you an timeout of 30 minutes (600 sec x 3)
 
-Enable DSA legacy keys:
+* The OpenSSH server configuration with the DSA legacy keys enabled:
 
-.. code-block:: yaml
+  .. code-block:: yaml
 
     openssh:
       server:
         dss_enabled: true
 
-CIS Compliance
-==============
+**CIS Compliance**
 
-There is a number of configuration options that make openssh service compliant with
-CIS Benchmark. Those options could be found under metadata/service/server/cis,
-and are not enabled by default. For each CIS item a comprehencive description
-is provided with pillar data.
+There is a number of configuration options that make the OpenSSH service
+compliant with CIS Benchmark. These options can be found under
+``metadata/service/server/cis``, and are not enabled by default. For each CIS
+item a comprehensive description is provided with the pillar data.
 
-More about CIS Benchmark could be found online at:
+See also https://www.cisecurity.org/cis-benchmarks/ for the details abouth
+CIS Benchmark.
 
-    https://www.cisecurity.org/cis-benchmarks/
-
-Read more
-=========
+**Read more**
 
 * http://www.openssh.org/manual.html
 * https://help.ubuntu.com/community/SSH/OpenSSH/Configuring
 * http://www.cyberciti.biz/tips/linux-unix-bsd-openssh-server-best-practices.html
 * http://www.zeitoun.net/articles/ssh-through-http-proxy/start
 
-Documentation and Bugs
-======================
+**Documentation and bugs**
 
-To learn how to install and update salt-formulas, consult the documentation
-available online at:
+* http://salt-formulas.readthedocs.io/
+   Learn how to install and update salt-formulas
 
-    http://salt-formulas.readthedocs.io/
+* https://github.com/salt-formulas/salt-formula-openssh/issues
+   In the unfortunate event that bugs are discovered, report the issue to the
+   appropriate issue tracker. Use the Github issue tracker for a specific salt
+   formula
 
-In the unfortunate event that bugs are discovered, they should be reported to
-the appropriate issue tracker. Use Github issue tracker for specific salt
-formula:
+* https://launchpad.net/salt-formulas
+   For feature requests, bug reports, or blueprints affecting the entire
+   ecosystem, use the Launchpad salt-formulas project
 
-    https://github.com/salt-formulas/salt-formula-openssh/issues
+* https://launchpad.net/~salt-formulas-users
+   Join the salt-formulas-users team and subscribe to mailing list if required
 
-For feature requests, bug reports or blueprints affecting entire ecosystem,
-use Launchpad salt-formulas project:
+* https://github.com/salt-formulas/salt-formula-openssh
+   Develop the salt-formulas projects in the master branch and then submit pull
+   requests against a specific formula
 
-    https://launchpad.net/salt-formulas
-
-You can also join salt-formulas-users team and subscribe to mailing list:
-
-    https://launchpad.net/~salt-formulas-users
-
-Developers wishing to work on the salt-formulas projects should always base
-their work on master branch and submit pull request against specific formula.
-
-    https://github.com/salt-formulas/salt-formula-openssh
-
-Any questions or feedback is always welcome so feel free to join our IRC
-channel:
-
-    #salt-formulas @ irc.freenode.net
+* #salt-formulas @ irc.freenode.net
+   Use this IRC channel in case of any questions or feedback which is always
+   welcome
