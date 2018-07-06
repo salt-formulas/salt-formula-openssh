@@ -60,6 +60,9 @@ Host {{ pattern }}
     {%- if cfg.username is defined %}
     User {{ cfg.username }}
     {%- endif %}
+    {%- if cfg.verify_host_key_dns is defined %}
+    VerifyHostKeyDNS {{ cfg.verify_host_key_dns }}
+    {%- endif %}
 {%- endmacro %}
 
 {%- if user_name is not defined %}
