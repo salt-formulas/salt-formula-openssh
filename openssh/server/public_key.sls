@@ -7,11 +7,21 @@
 
 {%- if user.public_keys is defined %}
 
+{%- if user.user.gid is defined %}
+{%- set group = user.user.gid %}
+{%- else %}
+{%- set group = user.user.name %}
+{%- endif %}
+
 {{ user.user.name }}_ssh_dir:
   file.directory:
   - name: {{ user.user.home }}/.ssh
+  {%- if user.user.uid is defined and user.user.uid == 0 %}
+  - user: root
+  {%- else %}
   - user: {{ user.user.name }}
-  - group: {{ user.user.name }}
+  {%- endif %}
+  - group: {{ group }}
   - mode: 700
 
 {%- if user.get('purge', False) %}
@@ -20,7 +30,7 @@
   file.managed:
   - name: {{ user.user.home }}/.ssh/authorized_keys
   - user: {{ user.user.name }}
-  - group: {{ user.user.name }}
+  - group: {{ group }}
   - mode: 644
   - template: jinja
   - source: salt://openssh/files/authorized_keys
