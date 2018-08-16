@@ -35,9 +35,9 @@ parameters:
       banner: |
         =================================== WARNING ====================================
         You have accessed a computer managed by ${_param:ssh_banner_company_name}.
-        You are required to have authorisation from ${_param:ssh_banner_company_name}
+        You are required to have authorization from ${_param:ssh_banner_company_name}
         before you proceed and you are strictly limited to use set out within that
-        authorisation. Unauthorised access to or misuse of this system is prohibited
+        authorization. Unauthorized access to or misuse of this system is prohibited
         and constitutes an offence under the Computer Misuse Act 1990.
         If you disclose any information obtained through this system without authority
         ${_param:ssh_banner_company_name} may take legal action against you.
