@@ -66,17 +66,31 @@ AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('User', 'nobody'
 ForceCommand {{ server.force_command }}
 {%- endif %}
 
+{%- macro patterns(pillar_key) %}
+  {%- set pillar_data = server.get(pillar_key, none) %}
+  {%- if pillar_data is mapping %}
+    {%- set patterns = [] %}
+    {%- for name, params in pillar_data.items() %}
+      {%- if params.get('enabled', true) %}
+        {%- do patterns.append(params.get('pattern', name)) %}
+      {%- endif %}
+    {%- endfor %}
+{{- patterns | join(' ') }}
+  {%- elif pillar_data is iterable %}
+{{- pillar_data | join(' ') }}
+  {%- endif %}
+{%- endmacro %}
 {% if server.get('deny_users', False) %}
-DenyUsers {{ server.deny_users|join(' ') }}
+DenyUsers {{ patterns('deny_users') }}
 {% endif %}
 {% if server.get('allow_users', False) %}
-AllowUsers {{ server.allow_users|join(' ') }}
+AllowUsers {{ patterns('allow_users') }}
 {% endif %}
 {% if server.get('deny_groups', False) %}
-DenyGroups {{ server.deny_groups|join(' ') }}
+DenyGroups {{ patterns('deny_groups') }}
 {% endif %}
 {% if server.get('allow_groups', False) %}
-AllowGroups {{ server.allow_groups|join(' ') }}
+AllowGroups {{ patterns('allow_groups') }}
 {% endif %}
 
 IgnoreRhosts {{ 'yes' if server.get('ignore_rhosts', True) else 'no' }}

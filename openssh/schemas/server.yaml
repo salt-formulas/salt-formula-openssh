@@ -16,6 +16,42 @@ properties:
     description: |
       Enables openssh server configurathion.
     type: boolean
+  allow_users:
+    type: object
+    description: |
+      This keyword can be followed by a list of user name patterns,
+      separated by spaces. If specified, login is allowed only for user names
+      that match one of the patterns.
+    properties:
+      enabled:
+        type: boolean
+  deny_users:
+    type: object
+    description: |
+      This keyword can be followed by a list of user name patterns,
+      separated by spaces. Login is disallowed for user names that match one
+      of the patterns.
+    properties:
+      enabled:
+        type: boolean
+  allow_groups:
+    type: object
+    description: |
+      This keyword can be followed by a list of group name patterns, separated
+      by spaces. If specified, login is allowed only for users whose primary
+      group or supplementary group list matches one of the patterns.
+    properties:
+      enabled:
+        type: boolean
+  deny_groups:
+    type: object
+    description: |
+      This keyword can be followed by a list of group name patterns, separated
+      by spaces. Login is disallowed for users whose primary group or
+      supplementary group list matches one of the patterns.
+    properties:
+      enabled:
+        type: boolean
   banner:
     description: |
       Banner

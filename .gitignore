@@ -1,4 +1,7 @@
 .kitchen
+.bundle/
+*Gemfile/
+bundle/
 tests/build/
 *.swp
 *.pyc

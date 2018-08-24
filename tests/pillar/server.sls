@@ -32,3 +32,23 @@ openssh:
       keep: no
       interval: 600
       # count: 3
+    allow_users:
+      allowed_user:
+        enabled: true
+      test_pattern:
+        pattern: "!*@*.dialup.example.com,*@*.example.com"
+    deny_users:
+      denied_user:
+        enabled: true
+      test_pattern:
+        pattern: "*@*.dialup.example.com"
+    allow_groups:
+      admin:
+        enabled: true
+      operator:
+        enabled: true
+    deny_groups:
+      root:
+        enabled: true
+      wheel:
+        enabled: true

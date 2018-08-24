@@ -154,6 +154,32 @@ This file provides the sample pillars configurations for different use cases.
       server:
         dss_enabled: true
 
+* OpenSSH server configuration supports AllowUsers, DenyUsers, AllowGroup,
+DenyGroups via allow_users, deny_users, allow_groups, deny_groups keys respectively.
+
+For example, here is how to manage AllowUsers configuration item:
+
+  .. code-block:: yaml
+
+    openssh:
+      server:
+        allow_users:
+          <user_name>:
+            enabled: true
+          <pattern_list_name>:
+            enabled: true
+            pattern: <pattern>
+
+Elements of allow_users are either user names or pattern list names:
+* <user name> goes to configurational file as is.
+* <pattern list name> is not used directly - its main purpose is to provide a
+  meaningfull name for a pattern specified in 'pattern' key. Another advantage
+  is that pattern can be overriden.
+
+<enabled> by default is 'true'.
+
+See PATTERNS in ssh_config(5) for more information on what <pattern> is.
+
 **CIS Compliance**
 
 There is a number of configuration options that make the OpenSSH service
