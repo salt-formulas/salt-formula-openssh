@@ -97,7 +97,7 @@ properties:
       Specifies whether the password provided by the user for
       PasswordAuthentication will be validated through the Kerberos
       KDC.  To use this option, the server needs a Kerberos servtab
-      which allows the verification of the KDC's identity. The default
+      which allows the verification of the KDC`s identity. The default
       is False ("no").
     type: boolean
   syslog_facility:
@@ -156,7 +156,7 @@ properties:
       Specifies the available MAC (message authentication code)
       algorithms.  The MAC algorithm is used for data integrity
       protection.  Multiple algorithms must be comma-separated.  If the
-      specified value begins with a '+' character, then the specified
+      specified value begins with a "+" character, then the specified
       algorithms will be appended to the default set instead of
       replacing them.
       .
@@ -264,8 +264,8 @@ properties:
       Protocol
       --------
       Specifies the protocol versions sshd(8) supports.  The possible
-      values are '1' and '2'.  Multiple versions must be comma-
-      separated.  The default is '2'.  Protocol 1 suffers from a number
+      values are "1" and "2".  Multiple versions must be comma-
+      separated.  The default is "2".  Protocol 1 suffers from a number
       of cryptographic weaknesses and should not be used.  It is only
       offered to support legacy devices.
       .
