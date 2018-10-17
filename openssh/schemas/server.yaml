@@ -365,6 +365,60 @@ properties:
       Specifies whether sshd should look up the remote host name, and to
       check that the resolved host name for the remote IP address maps back to the very same IP address
     type: boolean
+  challenge_response_auth:
+    description: |
+      ChallengeResponseAuthentication controls support for the 'keyboard-interactive' authentication scheme defined in RFC-4256.
+      The 'keyboard-interactive' authentication scheme could, in theory, ask a user any number of multi-facited questions.
+      It's using for duo 2FA authorization.
+    type: boolean
+  ciphers:
+    description: |
+      Symmetric algorithms for encrypting the bulk of transferred data are configured using the Ciphers option.
+      A good value is aes128-ctr,aes192-ctr,aes256-ctr. This should also provide good interoperability.
+    type: object
+    properties:
+      enabled:
+        description: |
+          Enables / disabled specific algorithm.
+        type: boolean
+  authentication_methods:
+    description: |
+      AuthenticationMethods
+      ---------------------
+      Specifies the authentication methods that must be successfully
+      completed for a user to be granted access. This option must be
+      followed by one or more comma-separated lists of authentication
+      method names, or by the single string any to indicate the default
+      behaviour of accepting any single authentication method. If the
+      default is overridden, then successful authentication requires
+      completion of every method in at least one of these lists.
+    type: object
+    properties:
+      enabled:
+        description: |
+          Enables / disabled specific method.
+        type: boolean
+  match_user:
+    description: |
+      Match User can be used to select individual users to alter the PasswordAuthentication directive for.
+      It's usefull for disabling 2FA for specific users.
+    type: object
+    properties:
+      user:
+        description: |
+          List of openssh user's, to be configured.
+          Example 'Match User root,foo,bar'
+        type: object
+        properties:
+          authentication_methods:
+            description: |
+              AuthenticationMethods (see description above) for specific user
+            type: object
+            properties:
+              enabled:
+                description: |
+                  Enables / disabled specific method.
+                type: boolean
 
 
 definitions:

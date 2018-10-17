@@ -12,7 +12,26 @@ linux:
 openssh:
   server:
     enabled: true
-    use_dns: yes
+    use_dns: false
+    password_auth: false
+    challenge_response_auth: true
+    ciphers:
+      aes256-ctr:
+        enabled: true
+      aes192-ctr:
+        enabled: true
+      aes128-ctr:
+        enabled: true
+    authentication_methods:
+      publickey:
+        enabled: true
+      keyboard-interactive:
+        enabled: true
+    match_user:
+      jenkins:
+        authentication_methods:
+          publickey:
+            enabled: true
     syslog_facility: auth
     user:
       testusername:

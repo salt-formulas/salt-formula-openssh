@@ -154,6 +154,37 @@ This file provides the sample pillars configurations for different use cases.
       server:
         dss_enabled: true
 
+* The OpenSSH server configuration with the duo 2FA
+https://duo.com/docs/duounix
+with Match User 2FA can be bypassed for some accounts
+
+  .. code-block:: yaml
+
+    openssh:
+      server:
+        use_dns: false
+        password_auth: false
+        challenge_response_auth: true
+        ciphers:
+          aes256-ctr:
+            enabled: true
+          aes192-ctr:
+            enabled: true
+          aes128-ctr:
+            enabled: true
+        authentication_methods:
+          publickey:
+            enabled: true
+          keyboard-interactive:
+            enabled: true
+        match_user:
+          jenkins:
+            authentication_methods:
+              publickey:
+                enabled: true
+
+
+
 * OpenSSH server configuration supports AllowUsers, DenyUsers, AllowGroup,
 DenyGroups via allow_users, deny_users, allow_groups, deny_groups keys respectively.
 

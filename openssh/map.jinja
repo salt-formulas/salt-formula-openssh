@@ -5,6 +5,8 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'use_dns': True,
+        'challenge_response_auth': False,
     },
     'Debian': {
         'pkgs': ['openssh-server'],
@@ -12,6 +14,8 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'use_dns': True,
+        'challenge_response_auth': False,
     },
     'MacOS': {
         'pkgs': ['openssh'],
@@ -19,6 +23,8 @@
         'config': '/etc/sshd_config',
         'lib_dir': '/usr/lib/openssh',
         'user': {},
+        'use_dns': True,
+        'challenge_response_auth': False,
     },
     'RedHat': {
         'pkgs': ['openssh'],
@@ -26,6 +32,8 @@
         'config': '/etc/ssh/sshd_config',
         'lib_dir': '/usr/libexec/openssh',
         'user': {},
+        'use_dns': True,
+        'challenge_response_auth': False,
     },
 }, merge=salt['pillar.get']('openssh:server')) %}
 

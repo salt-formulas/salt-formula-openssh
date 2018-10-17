@@ -111,7 +111,11 @@ PermitUserEnvironment {{ 'yes' if server.get('permit_user_environment', False) e
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)
+{%- if server.challenge_response_auth or server.challenge_response_auth == 'yes' %}
+ChallengeResponseAuthentication yes
+{%- else %}
 ChallengeResponseAuthentication no
+{%- endif %}
 
 # Change to no to disable tunnelled clear text passwords
 PasswordAuthentication {{ 'yes' if server.get('password_auth', True) else 'no' }}
@@ -134,8 +138,10 @@ GSSAPIAuthentication no
 {%- endif %}
 #GSSAPICleanupCredentials yes
 
-{%- if server.use_dns is defined %}
-UseDNS {{ server.use_dns }}
+{%- if server.use_dns or server.use_dns == 'yes' %}
+UseDNS yes
+{%- else %}
+UseDNS no
 {%- endif %}
 
 X11Forwarding {{ 'yes' if server.get('x11', {}).get('forwarding', True) else 'no' }}
@@ -193,6 +199,7 @@ Subsystem sftp {{ server.lib_dir }}/sftp-server
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
 # and ChallengeResponseAuthentication to 'no'.
+
 UsePAM yes
 
 {%- if server.get('dss_enabled', false) %}
@@ -225,5 +232,35 @@ PubkeyAcceptedKeyTypes=+ssh-dss
 {%- if mac_algorithms|length >0 %}
 MACs {{ mac_algorithms|join(',') }}
 {%- endif %}
+{%- endif %}
+
+
+{%- if server.ciphers is defined %}
+{%- set ciphers_list = [] %}
+{%- for k, v in server.ciphers.items() %}
+{%- set _ = ciphers_list.append(k) if v.get('enabled', False) %}
+{%- endfor %}
+Ciphers {{ ciphers_list|join(',') }}
+{%- endif %}
+
+{%- if server.authentication_methods is defined %}
+{%- set auth_methods = [] %}
+{%- for k, v in server.authentication_methods.items() %}
+{%- set _ = auth_methods.append(k) if v.get('enabled', False) %}
+{%- endfor %}
+AuthenticationMethods {{ auth_methods|join(',') }}
+{%- endif %}
+
+{%- if server.match_user is defined %}
+{%- for name, user in server.match_user.iteritems() %}
+Match User {{ name }}
+{%- if user.authentication_methods is defined %}
+{%- set auth_methods = [] %}
+{%- for k, v in user.authentication_methods.items() %}
+{%- set _ = auth_methods.append(k) if v.get('enabled', False) %}
+{%- endfor %}
+  AuthenticationMethods {{ auth_methods|join(',') }}
+{%- endif %}
+{%- endfor %}
 {%- endif %}
 
