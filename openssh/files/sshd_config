@@ -1,3 +1,5 @@
+# This file is managed by salt
+
 {%- from "openssh/map.jinja" import server with context %}
 
 # Package generated configuration file
