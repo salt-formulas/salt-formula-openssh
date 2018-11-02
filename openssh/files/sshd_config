@@ -268,3 +268,10 @@ Match User {{ name }}
 {%- endfor %}
 {%- endif %}
 
+{%- if server.match_host is defined %}
+{%- set hostnames = [] %}
+Match Host {{server.match_host.hostnames|join(',')}}
+{%- for option in server.match_host.options %}
+   {{option}}
+{%- endfor %}
+{%- endif %}
