@@ -17,6 +17,7 @@ Port {{ server.bind.port }}
 ListenAddress {{ server.bind.address }}
 {%- endif %}
 
+AllowTcpForwarding {{ 'yes' if server.get('allow_tcp_forwarding', True) else 'no' }}
 Protocol {{ server.get('protocol', 2) }}
 
 # HostKeys for protocol version 2
