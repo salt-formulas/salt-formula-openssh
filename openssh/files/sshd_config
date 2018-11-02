@@ -88,18 +88,19 @@ ForceCommand {{ server.force_command }}
 {{- pillar_data | join(' ') }}
   {%- endif %}
 {%- endmacro %}
-{% if server.get('deny_users', False) %}
+
+{%- if server.get('deny_users', False) %}
 DenyUsers {{ patterns('deny_users') }}
-{% endif %}
-{% if server.get('allow_users', False) %}
+{%- endif %}
+{%- if server.get('allow_users', False) %}
 AllowUsers {{ patterns('allow_users') }}
-{% endif %}
-{% if server.get('deny_groups', False) %}
+{%- endif %}
+{%- if server.get('deny_groups', False) %}
 DenyGroups {{ patterns('deny_groups') }}
-{% endif %}
-{% if server.get('allow_groups', False) %}
+{%- endif %}
+{%- if server.get('allow_groups', False) %}
 AllowGroups {{ patterns('allow_groups') }}
-{% endif %}
+{%- endif %}
 
 IgnoreRhosts {{ 'yes' if server.get('ignore_rhosts', True) else 'no' }}
 
@@ -160,11 +161,11 @@ TCPKeepAlive {{ server.get('alive', {}).get('keep','yes') }}
 
 {%- if server.get('alive', {'interval': None}).interval is number %}
 ClientAliveInterval {{ server.alive.interval }}
-{% endif %}
+{%- endif %}
 
 {%- if server.get('alive', {'count': None}).count is number %}
 ClientAliveCountMax {{ server.alive.count }}
-{% endif %}
+{%- endif %}
 
 {%- if server.max_sessions is defined %}
 MaxSessions {{ server.max_sessions }}
