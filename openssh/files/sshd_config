@@ -61,9 +61,11 @@ AuthorizedKeysFile     %h/.ssh/authorized_keys
 
 {%- if server.authorized_keys_command is defined %}
 AuthorizedKeysCommand {{ server.authorized_keys_command.command }}
-{% if (grains['os_family'] == 'RedHat' and grains['osmajorrelease'] != '6') or grains['os_family'] != 'RedHat' %}
 {%- if server.authorized_keys_command.user is defined %}
+{%- if (grains['os_family'] == 'RedHat' and grains['osmajorrelease']|int > 6) or grains['os_family'] != 'RedHat' %}
 AuthorizedKeysCommandUser {{ server.authorized_keys_command.get('User', 'nobody') }}
+{%- else %}
+AuthorizedKeysCommandRunAs {{ server.authorized_keys_command.get('User', 'nobody') }}
 {%- endif %}
 {%- endif %}
 {%- endif %}
