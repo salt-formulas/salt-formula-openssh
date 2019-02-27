@@ -13,12 +13,19 @@ include:
   - user: {{ user.user.name }}
   - name: {{ host.name }}
   - enc: {{ host.get('type', 'ecdsa') }}
+  {%- if host.key is defined %}
+  - key: {{ host.key }}
+  {%- else %}
+  - fingerprint: {{ host.fingerprint }}
   {%- if host.fingerprint_hash_type is defined %}
   - fingerprint_hash_type: {{ host.fingerprint_hash_type }}
   {%- endif %}
-  - fingerprint: {{ host.fingerprint }}
+  {%- endif %}
   {%- if host.port is defined %}
   - port: {{ host.port }}
+  {%- endif %}
+  {%- if host.hash_known_hosts is defined %}
+  - hash_known_hosts: {{ host.hash_known_hosts }}
   {%- endif %}
   - require:
     - pkg: openssh_client_packages
