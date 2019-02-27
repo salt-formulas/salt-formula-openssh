@@ -17,6 +17,9 @@ include:
   - fingerprint_hash_type: {{ host.fingerprint_hash_type }}
   {%- endif %}
   - fingerprint: {{ host.fingerprint }}
+  {%- if host.port is defined %}
+  - port: {{ host.port }}
+  {%- endif %}
   - require:
     - pkg: openssh_client_packages
     - file: {{ user.user.home }}/.ssh
