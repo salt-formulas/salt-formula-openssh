@@ -1,5 +1,5 @@
 {%- from "openssh/map.jinja" import server with context -%}# This file is managed by Salt. Manual changes will be overwritten.
-{%- for name, user in server.user.iteritems() -%}
+{%- for name, user in server.user.items() -%}
 {%- if user.user.name == user_name -%}
 {%- for public_key in user.public_keys %}
 {{ public_key.key }}

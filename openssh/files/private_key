@@ -1,3 +1,3 @@
-{%- from "openssh/map.jinja" import client with context %}{%- for name, user in client.user.iteritems() %}{% if user.user.name == user_name %}{{ user.private_key.key }}
+{%- from "openssh/map.jinja" import client with context %}{%- for name, user in client.user.items() %}{% if user.user.name == user_name %}{{ user.private_key.key }}
 {%- endif %}
 {%- endfor %}
