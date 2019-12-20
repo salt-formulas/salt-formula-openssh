@@ -252,7 +252,7 @@ AuthenticationMethods {{ auth_methods|join(',') }}
 {%- endif %}
 
 {%- if server.match_user is defined %}
-{%- for name, user in server.match_user.iteritems() %}
+{%- for name, user in server.match_user.items() %}
 Match User {{ name }}
 {%- if user.authentication_methods is defined %}
 {%- set auth_methods = [] %}

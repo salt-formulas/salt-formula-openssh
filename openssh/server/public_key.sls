@@ -1,7 +1,7 @@
 {%- from "openssh/map.jinja" import server with context %}
 {%- if server.enabled %}
 
-{%- for user_name, user in server.user.iteritems() %}
+{%- for user_name, user in server.user.items() %}
 
 {%- if user.get('enabled', False) %}
 

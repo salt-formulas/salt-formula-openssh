@@ -66,8 +66,8 @@ Host {{ pattern }}
 {%- do global_config.update(client) %}
 {{ host_config('*', global_config) }}
 {%- else %}
-    {%- for name, user in client.user.iteritems() %}{% if name == user_name %}
-        {% for pattern, config in user.get('config', {}).iteritems() %}
+    {%- for name, user in client.user.items() %}{% if name == user_name %}
+        {% for pattern, config in user.get('config', {}).items() %}
 {{ host_config(pattern, config) }}
         {% endfor %}
     {%- endif %}{%- endfor %}

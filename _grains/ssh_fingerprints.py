@@ -12,7 +12,7 @@ def main():
     }
 
     ssh_fingerprints = {}
-    for key_type, filename in host_keys.iteritems():
+    for key_type, filename in host_keys.items():
         try:
             ssh_fingerprints[key_type] = _get_ssh_fingerprint(filename)
         except IOError:

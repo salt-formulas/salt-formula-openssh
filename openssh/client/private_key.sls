@@ -4,7 +4,7 @@
 include:
 - openssh.client.service
 
-{%- for xxx, user in client.get('user', {}).iteritems() %}
+{%- for xxx, user in client.get('user', {}).items() %}
 
 {%- if user.private_key is defined %}
 
